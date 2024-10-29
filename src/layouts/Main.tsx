@@ -8,6 +8,10 @@ type MainProps = {
     items: ItemType[];
 };
 
+function escapeRegExp(string: string) {
+    return string.replace(/\\/g, '\\\\');
+}
+
 export const Main: React.FC<MainProps> = ({ items }) => {
     const [searchValue, setSearchValue] = React.useState<ItemType | string | null>(null);
 
@@ -93,14 +97,13 @@ export const Main: React.FC<MainProps> = ({ items }) => {
                 if (searchValue === null) {
                     return <List items={items} />;
                 } else if (typeof searchValue === 'string') {
+                    const val = escapeRegExp(searchValue);
                     return (
                         <List
                             items={items.filter(
                                 (item) =>
-                                    item.title.match(new RegExp(searchValue, 'gi')) ||
-                                    item.tags.find((tag) =>
-                                        tag.match(new RegExp(searchValue, 'gi'))
-                                    )
+                                    item.title.match(new RegExp(val, 'gi')) ||
+                                    item.tags.find((tag) => tag.match(new RegExp(val, 'gi')))
                             )}
                         />
                     );
