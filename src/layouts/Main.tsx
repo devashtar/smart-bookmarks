@@ -11,23 +11,8 @@ type MainProps = {
 export const Main: React.FC<MainProps> = ({ items }) => {
     const [searchValue, setSearchValue] = React.useState<ItemType | string | null>(null);
 
-    const filteredItems = React.useMemo(() => {
-        if (searchValue === null) {
-            return <List items={items} />;
-        } else if (typeof searchValue === 'string') {
-            return (
-                <List
-                    items={items.filter((item) =>
-                        item.tags.find((tag) => tag.startsWith(searchValue))
-                    )}
-                />
-            );
-        }
-        return <List items={[searchValue]} />;
-    }, [items, searchValue]);
-
     return (
-        <Stack sx={{ width: '100%' }}>
+        <>
             {React.useMemo(
                 () => (
                     <Stack
@@ -104,7 +89,24 @@ export const Main: React.FC<MainProps> = ({ items }) => {
                 ),
                 [items]
             )}
-            {filteredItems}
-        </Stack>
+            {React.useMemo(() => {
+                if (searchValue === null) {
+                    return <List items={items} />;
+                } else if (typeof searchValue === 'string') {
+                    return (
+                        <List
+                            items={items.filter(
+                                (item) =>
+                                    item.title.match(new RegExp(searchValue, 'gi')) ||
+                                    item.tags.find((tag) =>
+                                        tag.match(new RegExp(searchValue, 'gi'))
+                                    )
+                            )}
+                        />
+                    );
+                }
+                return <List items={[searchValue]} />;
+            }, [items, searchValue])}
+        </>
     );
 };
