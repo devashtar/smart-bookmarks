@@ -3,14 +3,17 @@ import { Box, Card, CardMedia, Divider, Typography } from '@mui/material';
 import { ItemType } from '../data';
 import NoImage from '../assets/No_image.svg';
 
-type ItemProps = ItemType;
+type ItemProps = {
+    onClick: () => void;
+} & ItemType;
 
-export const Item: React.FC<ItemProps> = ({ description, imgSrc, title, url }) => {
+export const Item: React.FC<ItemProps> = ({ onClick, description, imgSrc, title, url }) => {
     return (
         <Card
             component="a"
             href={url}
             target="_blank"
+            onMouseDown={(e) => [0, 1].includes(e.button) && onClick()}
             elevation={4}
             sx={{ textDecoration: 'none' }}
         >

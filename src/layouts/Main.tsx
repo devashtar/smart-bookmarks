@@ -1,19 +1,52 @@
 import React from 'react';
 import { Autocomplete, TextField, Stack, Typography, alpha } from '@mui/material';
-import { List, ThemeSwitcher } from '../components';
+import { HotLinks, List, ThemeSwitcher } from '../components';
 import { ItemType } from '../data';
+import { escapeRegExp, getHotLinks, removeHotLink, addHotLink, hasHotLink } from '../tools';
 import DartVaderHeadImg from '../assets/png/Dart_Vader_head.png';
 
 type MainProps = {
     items: ItemType[];
 };
 
-function escapeRegExp(string: string) {
-    return string.replace(/\\/g, '\\\\');
-}
+const LIMIT_HOT_LINKS = 15;
+
+const getDefaultLinks = () => {
+    const links = getHotLinks();
+    if (links === null || links.length === 0) {
+        return [];
+    }
+    return links.split(' ').map((l) => Number(l));
+};
 
 export const Main: React.FC<MainProps> = ({ items }) => {
+    const [links, setLinks] = React.useState<ItemType['id'][]>(getDefaultLinks());
     const [searchValue, setSearchValue] = React.useState<ItemType | string | null>(null);
+
+    const addLink = React.useCallback(
+        (curId: ItemType['id']) => {
+            if (!hasHotLink(curId)) {
+                setLinks((s) => {
+                    if (s.length === LIMIT_HOT_LINKS) {
+                        removeHotLink(s[0]);
+                        addHotLink(curId);
+                        return [...s.slice(1), curId];
+                    }
+                    addHotLink(curId);
+                    return [...s, curId];
+                });
+            }
+        },
+        [setLinks]
+    );
+
+    const removeLink = React.useCallback(
+        (curId: ItemType['id']) => {
+            removeHotLink(curId);
+            setLinks((s) => s.filter((id) => id !== curId));
+        },
+        [setLinks]
+    );
 
     return (
         <>
@@ -93,9 +126,10 @@ export const Main: React.FC<MainProps> = ({ items }) => {
                 ),
                 [items]
             )}
+            <HotLinks links={links} removeLink={removeLink} />
             {React.useMemo(() => {
                 if (searchValue === null) {
-                    return <List items={items} />;
+                    return <List items={items} addLink={addLink} />;
                 } else if (typeof searchValue === 'string') {
                     const val = escapeRegExp(searchValue);
                     return (
@@ -105,10 +139,11 @@ export const Main: React.FC<MainProps> = ({ items }) => {
                                     item.title.match(new RegExp(val, 'gi')) ||
                                     item.tags.find((tag) => tag.match(new RegExp(val, 'gi')))
                             )}
+                            addLink={addLink}
                         />
                     );
                 }
-                return <List items={[searchValue]} />;
+                return <List items={[searchValue]} addLink={addLink} />;
             }, [items, searchValue])}
         </>
     );

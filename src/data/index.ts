@@ -9,8 +9,6 @@ export type ItemType = {
 
 const IMG_PATH = `${process.env.PUBLIC_URL}/images`;
 
-console.log(IMG_PATH);
-
 /**
  * List of sites.
  */

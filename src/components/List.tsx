@@ -5,9 +5,10 @@ import { Item } from './Item';
 
 type ListProps = {
     items: ItemType[];
+    addLink: (id: ItemType['id']) => void;
 };
 
-export const List: React.FC<ListProps> = ({ items }) => {
+export const List: React.FC<ListProps> = ({ items, addLink }) => {
     return (
         <Box
             sx={{
@@ -18,7 +19,7 @@ export const List: React.FC<ListProps> = ({ items }) => {
             }}
         >
             {items.map((item) => (
-                <Item key={item.id} {...item} />
+                <Item key={item.id} {...item} onClick={() => addLink(item.id)} />
             ))}
         </Box>
     );
