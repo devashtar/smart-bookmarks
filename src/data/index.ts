@@ -7,7 +7,9 @@ export type ItemType = {
     tags: Array<string>;
 };
 
-const IMG_PATH = '/images';
+const IMG_PATH = `${process.env.PUBLIC_URL}/images`;
+
+console.log(IMG_PATH);
 
 /**
  * List of sites.
