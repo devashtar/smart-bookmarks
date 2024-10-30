@@ -1,5 +1,5 @@
 import React from 'react';
-import { Autocomplete, TextField, Stack, Typography, alpha } from '@mui/material';
+import { Autocomplete, TextField, Stack, Typography, alpha, styled, Popper } from '@mui/material';
 import { ExtendedItemType } from '../App';
 import { HotLinks, List } from '../components';
 import { ItemType } from '../data';
@@ -8,6 +8,12 @@ import { escapeRegExp, getHotLinks, removeHotLink, addHotLink, hasHotLink } from
 type MainProps = {
     items: ExtendedItemType[];
 };
+
+const CustomPopper = styled(Popper)(() => ({
+    '& .MuiAutocomplete-listbox': {
+        maxHeight: '320px',
+    },
+}));
 
 const LIMIT_HOT_LINKS = 7;
 
@@ -61,7 +67,10 @@ export const Main: React.FC<MainProps> = ({ items }) => {
                             zIndex: 1,
                             position: 'sticky',
                             overflow: 'hidden',
-                            top: 48,
+                            top: {
+                                xs: 12,
+                                md: 48,
+                            },
                             alignItems: 'center',
                             justifyContent: 'space-around',
                             borderRadius: 1,
@@ -75,9 +84,9 @@ export const Main: React.FC<MainProps> = ({ items }) => {
                                 bgcolor: (theme) => theme.palette.background.paper,
                                 borderRadius: 1,
                             }}
-                            ListboxProps={{ style: { maxHeight: 480 } }}
                             size="small"
                             freeSolo
+                            PopperComponent={CustomPopper}
                             options={items.filter((item) => !item.hidden)}
                             filterOptions={(options, state) => {
                                 if (!state) return options;
