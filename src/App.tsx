@@ -11,25 +11,35 @@ const theme = createTheme({
     },
 });
 
+export type ExtendedItemType = {
+    hidden: boolean;
+} & ItemType;
+
+const extendedItems: ExtendedItemType[] = list.map((item) => ({ ...item, hidden: false }));
+
 export const App: React.FC = () => {
-    const [items, setItems] = React.useState<ItemType[]>(list);
     const [checkedTags, setCheckedTags] = React.useState<Array<string>>([]);
 
-    const toggleTag = (tag: string) => {
-        setCheckedTags((s) => {
-            if (s.includes(tag)) {
-                return s.filter((item) => item !== tag);
-            }
-            return [...s, tag];
-        });
-    };
+    const toggleTag = React.useCallback(
+        (tag: string) => {
+            setCheckedTags((s) => {
+                if (s.includes(tag)) {
+                    return s.filter((item) => item !== tag);
+                }
+                return [...s, tag];
+            });
+        },
+        [setCheckedTags]
+    );
 
-    React.useEffect(() => {
+    const items = React.useMemo(() => {
         if (checkedTags.length !== 0) {
-            setItems(list.filter((item) => item.tags.find((tag) => checkedTags.includes(tag))));
-        } else {
-            setItems(list);
+            return extendedItems.map((item) => {
+                const hidden = !Boolean(item.tags.find((tag) => checkedTags.includes(tag)));
+                return hidden ? { ...item, hidden } : item;
+            });
         }
+        return extendedItems;
     }, [checkedTags]);
 
     return (

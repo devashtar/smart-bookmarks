@@ -1,13 +1,13 @@
 import React from 'react';
 import { Box, Card, CardMedia, Divider, Typography } from '@mui/material';
-import { ItemType } from '../data';
+import { ExtendedItemType } from '../App';
 import NoImage from '../assets/No_image.svg';
 
 type ItemProps = {
     onClick: () => void;
-} & ItemType;
+} & ExtendedItemType;
 
-export const Item: React.FC<ItemProps> = ({ onClick, description, imgSrc, title, url }) => {
+export const Item: React.FC<ItemProps> = ({ onClick, description, imgSrc, title, url, hidden }) => {
     return (
         <Card
             component="a"
@@ -15,6 +15,7 @@ export const Item: React.FC<ItemProps> = ({ onClick, description, imgSrc, title,
             target="_blank"
             onMouseDown={(e) => [0, 1].includes(e.button) && onClick()}
             elevation={4}
+            hidden={hidden}
             sx={{ textDecoration: 'none' }}
         >
             <CardMedia

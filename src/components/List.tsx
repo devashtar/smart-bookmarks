@@ -2,9 +2,10 @@ import React from 'react';
 import { ItemType } from '../data';
 import { Box } from '@mui/material';
 import { Item } from './Item';
+import { ExtendedItemType } from '../App';
 
 type ListProps = {
-    items: ItemType[];
+    items: ExtendedItemType[];
     addLink: (id: ItemType['id']) => void;
 };
 

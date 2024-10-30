@@ -1,12 +1,13 @@
 import React from 'react';
 import { Autocomplete, TextField, Stack, Typography, alpha } from '@mui/material';
+import { ExtendedItemType } from '../App';
 import { HotLinks, List, ThemeSwitcher } from '../components';
 import { ItemType } from '../data';
 import { escapeRegExp, getHotLinks, removeHotLink, addHotLink, hasHotLink } from '../tools';
 import DartVaderHeadImg from '../assets/png/Dart_Vader_head.png';
 
 type MainProps = {
-    items: ItemType[];
+    items: ExtendedItemType[];
 };
 
 const LIMIT_HOT_LINKS = 15;
@@ -78,7 +79,7 @@ export const Main: React.FC<MainProps> = ({ items }) => {
                             ListboxProps={{ style: { maxHeight: 480 } }}
                             size="small"
                             freeSolo
-                            options={items}
+                            options={items.filter((item) => !item.hidden)}
                             filterOptions={(options, state) => {
                                 if (!state) return options;
 
@@ -128,22 +129,20 @@ export const Main: React.FC<MainProps> = ({ items }) => {
             )}
             <HotLinks links={links} removeLink={removeLink} />
             {React.useMemo(() => {
-                if (searchValue === null) {
-                    return <List items={items} addLink={addLink} />;
-                } else if (typeof searchValue === 'string') {
-                    const val = escapeRegExp(searchValue);
-                    return (
-                        <List
-                            items={items.filter(
-                                (item) =>
-                                    item.title.match(new RegExp(val, 'gi')) ||
-                                    item.tags.find((tag) => tag.match(new RegExp(val, 'gi')))
-                            )}
-                            addLink={addLink}
-                        />
-                    );
-                }
-                return <List items={[searchValue]} addLink={addLink} />;
+                const newItems =
+                    searchValue === null
+                        ? items
+                        : typeof searchValue === 'string'
+                        ? items.map((item) => {
+                              const val = escapeRegExp(searchValue);
+                              const hidden = !Boolean(
+                                  item.title.match(new RegExp(val, 'gi')) ||
+                                      item.tags.find((tag) => tag.match(new RegExp(val, 'gi')))
+                              );
+                              return hidden ? { ...item, hidden } : item;
+                          })
+                        : items.map((item) => ({ ...item, hidden: item.id !== searchValue.id }));
+                return <List items={newItems} addLink={addLink} />;
             }, [items, searchValue])}
         </>
     );
