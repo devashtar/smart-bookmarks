@@ -13,10 +13,18 @@ export const List: React.FC<ListProps> = ({ items, addLink }) => {
     return (
         <Box
             sx={{
-                py: 5,
+                pt: 2,
+                pb: 5,
                 display: 'grid',
-                gap: 2,
-                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: {
+                    xs: 1,
+                    md: 2,
+                },
+                gridTemplateColumns: {
+                    xs: 'repeat(1, 1fr)',
+                    sm: 'repeat(2, 1fr)',
+                    lg: 'repeat(3, 1fr)',
+                },
             }}
         >
             {items.map((item) => (

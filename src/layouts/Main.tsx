@@ -1,16 +1,15 @@
 import React from 'react';
 import { Autocomplete, TextField, Stack, Typography, alpha } from '@mui/material';
 import { ExtendedItemType } from '../App';
-import { HotLinks, List, ThemeSwitcher } from '../components';
+import { HotLinks, List } from '../components';
 import { ItemType } from '../data';
 import { escapeRegExp, getHotLinks, removeHotLink, addHotLink, hasHotLink } from '../tools';
-import DartVaderHeadImg from '../assets/png/Dart_Vader_head.png';
 
 type MainProps = {
     items: ExtendedItemType[];
 };
 
-const LIMIT_HOT_LINKS = 15;
+const LIMIT_HOT_LINKS = 7;
 
 const getDefaultLinks = () => {
     const links = getHotLinks();
@@ -57,18 +56,18 @@ export const Main: React.FC<MainProps> = ({ items }) => {
                         direction="row"
                         spacing={2}
                         sx={{
+                            p: '16px 4px',
                             width: '100%',
                             zIndex: 1,
                             position: 'sticky',
                             overflow: 'hidden',
                             top: 48,
                             alignItems: 'center',
-                            justifyContent: 'space-between',
+                            justifyContent: 'space-around',
                             borderRadius: 1,
-                            bgcolor: (theme) => alpha(theme.palette.background.paper, 0.8),
+                            bgcolor: (theme) => alpha(theme.palette.background.paper, 0.7),
                         }}
                     >
-                        <ThemeSwitcher />
                         <Autocomplete
                             fullWidth
                             sx={{
@@ -116,12 +115,6 @@ export const Main: React.FC<MainProps> = ({ items }) => {
                                 );
                             }}
                             renderInput={(params) => <TextField {...params} fullWidth />}
-                        />
-                        <img
-                            alt="Dart Vader"
-                            src={DartVaderHeadImg}
-                            height={76}
-                            style={{ objectFit: 'contain', objectPosition: 'center' }}
                         />
                     </Stack>
                 ),

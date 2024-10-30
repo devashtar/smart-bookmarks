@@ -1,15 +1,8 @@
 import React from 'react';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { Container, Grid2 as Grid, Stack } from '@mui/material';
 import { items as list, ItemType } from './data';
-import { Container, CssBaseline, Grid2 as Grid } from '@mui/material';
 import { Main, Sidebar } from './layouts';
-
-const theme = createTheme({
-    colorSchemes: {
-        light: true,
-        dark: true,
-    },
-});
+import { ThemeSwitcher } from './components';
 
 export type ExtendedItemType = {
     hidden: boolean;
@@ -32,33 +25,34 @@ export const App: React.FC = () => {
         [setCheckedTags]
     );
 
-    const items = React.useMemo(() => {
-        if (checkedTags.length !== 0) {
-            return extendedItems.map((item) => {
-                const hidden = !Boolean(item.tags.find((tag) => checkedTags.includes(tag)));
-                return hidden ? { ...item, hidden } : item;
-            });
-        }
-        return extendedItems;
-    }, [checkedTags]);
-
     return (
-        <ThemeProvider theme={theme}>
-            <CssBaseline enableColorScheme />
-            <Container sx={{ pt: 6 }} maxWidth="xl">
-                <Grid container spacing={2}>
-                    <Grid size={3}>
-                        <Sidebar
-                            checkedTags={checkedTags}
-                            toggleTag={toggleTag}
-                            resetTags={() => checkedTags.length !== 0 && setCheckedTags([])}
-                        />
-                    </Grid>
-                    <Grid size={9}>
-                        <Main items={items} />
-                    </Grid>
+        <Container maxWidth="xl">
+            <Stack direction="row-reverse" sx={{ pt: 2 }}>
+                <ThemeSwitcher />
+            </Stack>
+            <Grid container spacing={2}>
+                <Grid size={'grow'} sx={{ display: { xs: 'none', md: 'block' } }}>
+                    <Sidebar
+                        checkedTags={checkedTags}
+                        toggleTag={toggleTag}
+                        resetTags={() => checkedTags.length !== 0 && setCheckedTags([])}
+                    />
                 </Grid>
-            </Container>
-        </ThemeProvider>
+                <Grid size={{ xs: 'grow', md: 8, lg: 9 }}>
+                    <Main
+                        items={
+                            checkedTags.length !== 0
+                                ? extendedItems.map((item) => {
+                                      const hidden = !Boolean(
+                                          item.tags.find((tag) => checkedTags.includes(tag))
+                                      );
+                                      return hidden ? { ...item, hidden } : item;
+                                  })
+                                : extendedItems
+                        }
+                    />
+                </Grid>
+            </Grid>
+        </Container>
     );
 };
